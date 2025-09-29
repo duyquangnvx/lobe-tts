@@ -1,17 +1,17 @@
 {
-  "name": "@lobehub/tts",
-  "version": "2.0.1",
-  "description": "A high-quality & reliable TTS React Hooks library",
-  "homepage": "https://github.com/lobehub/lobe-tts",
+  "name": "@duyquangnvx/lobe-tts",
+  "version": "1.0.3",
+  "description": "A high-quality & reliable TTS React Hooks library with enhanced SSML options support",
+  "homepage": "https://github.com/duyquangnvx/lobe-tts",
   "bugs": {
-    "url": "https://github.com/lobehub/lobe-tts/issues/new/choose"
+    "url": "https://github.com/duyquangnvx/lobe-tts/issues/new/choose"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lobehub/lobe-tts.git"
+    "url": "https://github.com/duyquangnvx/lobe-tts.git"
   },
   "license": "MIT",
-  "author": "LobeHub <i@lobehub.com>",
+  "author": "Duy Quang <duyquangnvx@gmail.com>",
   "sideEffects": false,
   "main": "es/index.js",
   "module": "es/index.js",
@@ -41,6 +41,7 @@
     "prepare": "husky && npm run setup",
     "prepublishOnly": "npm run build",
     "prettier": "prettier -c --write \"**/**\"",
+    "publish": "bun publish --access public",
     "release": "semantic-release",
     "setup": "dumi setup",
     "test": "vitest --passWithNoTests",

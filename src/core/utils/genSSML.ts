@@ -28,9 +28,16 @@ const styleTemplate = (input: string, { style }: Pick<SsmlOptions, 'style'>) => 
 
 const prosodyTemplate = (input: string, { pitch, rate }: Pick<SsmlOptions, 'pitch' | 'rate'>) => {
   if (!pitch && !rate) return input;
-  return `<prosody pitch="${Math.floor((pitch || 1) * 100)}%" rate="${Math.floor(
-    (rate || 1) * 100,
-  )}%">${input}</prosody>`;
+
+  const prosodyAttrs = [];
+  if (pitch !== undefined) {
+    prosodyAttrs.push(`pitch="${Math.floor(pitch * 100)}%"`);
+  }
+  if (rate !== undefined) {
+    prosodyAttrs.push(`rate="${Math.floor(rate * 100)}%"`);
+  }
+
+  return `<prosody ${prosodyAttrs.join(' ')}>${input}</prosody>`;
 };
 const speackTemplate = (input: string) =>
   `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">${input}</speak>`;

@@ -8,7 +8,7 @@ import { Flexbox } from 'react-layout-kit';
 
 import { genLevaOptions } from '../../_util/leva';
 
-const defaultText = '这是一段使用 Edge Speech 的语音演示';
+const defaultText = 'Xin chào, tôi là Hoài My - Tôi là một nhân viên của công ty LobeHub';
 
 export default () => {
   const store = useCreateStore();
@@ -22,9 +22,15 @@ export default () => {
 
   const options: any = useControls(
     {
+      rate: {
+        max: 2,
+        min: 0,
+        step: 0.1,
+        value: 1,
+      },
       voice: {
         options: genLevaOptions(new EdgeSpeechTTS().voiceOptions),
-        value: 'zh-CN-YunxiaNeural',
+        value: 'vi-VN-HoaiMyNeural',
       },
     },
     { store },
