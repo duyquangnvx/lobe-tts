@@ -9,7 +9,7 @@ export interface StreamAudioPlayerOptions {
 export interface StreamAudioPlayerResponse extends AudioProps {
   arrayBuffers: ArrayBuffer[];
   download: () => void;
-  load: (arrayBuffer: ArrayBuffer) => void;
+  load: (arrayBuffer: ArrayBuffer, shouldAutoPlay?: boolean) => void;
   ref: RefObject<HTMLAudioElement>;
   reset: () => void;
   url: string;
@@ -66,7 +66,10 @@ export const useStreamAudioPlayer = (
         audioRef.current.src = newUrl;
         audioRef.current.load();
         audioRef.current.currentTime = cacheTime;
-        audioRef.current.play();
+        // Fix: Only auto-play if currently playing
+        if (isPlaying) {
+          audioRef.current.play();
+        }
         setMaxLength(arrayBuffers.length);
       } else {
         // All audio ended
@@ -83,27 +86,41 @@ export const useStreamAudioPlayer = (
       if (!audioRef.current) return;
       audioRef.current.removeEventListener('ended', onEnded);
     };
-  }, [maxLength, arrayBuffers, onAudioEnd]);
+  }, [maxLength, arrayBuffers, onAudioEnd, isPlaying]);
 
   const loadArrayBuffer = useCallback(
-    async (arrayBuffer: ArrayBuffer) => {
+    async (arrayBuffer: ArrayBuffer, shouldAutoPlay: boolean = true) => {
       if (!arrayBuffer || !audioRef.current) return;
       if (maxLength === 0) {
         const newBlob = new Blob([arrayBuffer], { type: 'audio/mp3' });
         audioRef.current.src = URL.createObjectURL(newBlob);
         audioRef.current.load();
-        audioRef.current.play();
-        setIsPlaying(true);
+        // Fix: Only auto-play if shouldAutoPlay is true
+        if (shouldAutoPlay) {
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
         setMaxLength(1);
       }
-      setArrayBuffers((prev) => [...prev, arrayBuffer].filter(Boolean));
+      setArrayBuffers((prev: ArrayBuffer[]) => [...prev, arrayBuffer].filter(Boolean));
     },
     [maxLength],
   );
 
-  const handlePlay = useCallback(() => {
+  const handlePlay = useCallback(async () => {
     if (!audioRef.current) return;
     if (audioRef.current.duration > 0) {
+      // Fix: Check readyState and wait if needed
+      if (audioRef.current.readyState < 2) {
+        // Wait for audio to be ready
+        await new Promise((resolve) => {
+          const onCanPlay = () => {
+            audioRef.current?.removeEventListener('canplay', onCanPlay);
+            resolve(void 0);
+          };
+          audioRef.current?.addEventListener('canplay', onCanPlay);
+        });
+      }
       setIsPlaying(true);
       audioRef.current.play();
     }
@@ -120,6 +137,8 @@ export const useStreamAudioPlayer = (
     setIsPlaying(false);
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
+    // Fix: Add load() to reset audio state properly
+    audioRef.current.load();
   }, []);
 
   const setTime = useCallback((value: number) => {
