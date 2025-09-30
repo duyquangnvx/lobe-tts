@@ -1,6 +1,6 @@
 {
   "name": "@duyquangnvx/lobe-tts",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "A high-quality & reliable TTS React Hooks library with enhanced SSML options support",
   "homepage": "https://github.com/duyquangnvx/lobe-tts",
   "bugs": {
@@ -41,7 +41,6 @@
     "prepare": "husky && npm run setup",
     "prepublishOnly": "npm run build",
     "prettier": "prettier -c --write \"**/**\"",
-    "publish": "bun publish --access public",
     "release": "semantic-release",
     "setup": "dumi setup",
     "test": "vitest --passWithNoTests",

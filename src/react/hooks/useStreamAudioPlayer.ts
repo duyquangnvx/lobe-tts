@@ -2,6 +2,10 @@ import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import { AudioProps } from '@/react/AudioPlayer';
 
+export interface StreamAudioPlayerOptions {
+  onAudioEnd?: () => void;
+}
+
 export interface StreamAudioPlayerResponse extends AudioProps {
   arrayBuffers: ArrayBuffer[];
   download: () => void;
@@ -11,7 +15,10 @@ export interface StreamAudioPlayerResponse extends AudioProps {
   url: string;
 }
 
-export const useStreamAudioPlayer = (): StreamAudioPlayerResponse => {
+export const useStreamAudioPlayer = (
+  options?: StreamAudioPlayerOptions,
+): StreamAudioPlayerResponse => {
+  const { onAudioEnd } = options || {};
   const audioRef = useRef<HTMLAudioElement>(null);
   const [arrayBuffers, setArrayBuffers] = useState<ArrayBuffer[]>([]);
   const [currentTime, setCurrentTime] = useState(0);
@@ -62,6 +69,8 @@ export const useStreamAudioPlayer = (): StreamAudioPlayerResponse => {
         audioRef.current.play();
         setMaxLength(arrayBuffers.length);
       } else {
+        // All audio ended
+        onAudioEnd?.();
         setIsPlaying(false);
         audioRef.current.currentTime = 0;
         setCurrentTime(0);
@@ -74,7 +83,7 @@ export const useStreamAudioPlayer = (): StreamAudioPlayerResponse => {
       if (!audioRef.current) return;
       audioRef.current.removeEventListener('ended', onEnded);
     };
-  }, [maxLength, arrayBuffers]);
+  }, [maxLength, arrayBuffers, onAudioEnd]);
 
   const loadArrayBuffer = useCallback(
     async (arrayBuffer: ArrayBuffer) => {

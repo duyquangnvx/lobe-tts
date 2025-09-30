@@ -3,7 +3,10 @@ import useSWR, { type SWRConfiguration, type SWRResponse } from 'swr';
 
 import { splitTextIntoSegments } from '@/core/utils/splitTextIntoSegments';
 import { type AudioProps } from '@/react/AudioPlayer';
-import { useStreamAudioPlayer } from '@/react/hooks/useStreamAudioPlayer';
+import {
+  type StreamAudioPlayerOptions,
+  useStreamAudioPlayer,
+} from '@/react/hooks/useStreamAudioPlayer';
 
 export interface TTSResponse extends SWRConfiguration, Pick<SWRResponse, 'error' | 'mutate'> {
   audio: AudioProps & {
@@ -16,7 +19,7 @@ export interface TTSResponse extends SWRConfiguration, Pick<SWRResponse, 'error'
   stop: () => void;
 }
 
-export interface TTSOptions extends SWRConfiguration {
+export interface TTSOptions extends SWRConfiguration, StreamAudioPlayerOptions {
   onFinish?: SWRConfiguration['onSuccess'];
   onStart?: () => void;
   onStop?: () => void;
@@ -26,13 +29,15 @@ export const useTTS = (
   key: string,
   text: string,
   fetchTTS: (segmentText: string) => Promise<ArrayBuffer>,
-  { onError, onSuccess, onFinish, onStart, onStop, ...restSWRConfig }: TTSOptions = {},
+  { onError, onSuccess, onFinish, onStart, onStop, onAudioEnd, ...restSWRConfig }: TTSOptions = {},
 ): TTSResponse => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(false);
   const [isGlobalLoading, setIsGlobalLoading] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
   const [textArray, setTextArray] = useState<string[]>([]);
-  const { load, reset, ...restAudio } = useStreamAudioPlayer();
+  const { load, reset, ...restAudio } = useStreamAudioPlayer({
+    onAudioEnd,
+  });
 
   const handleReset = useCallback((newText: string[] = []) => {
     setShouldFetch(false);
