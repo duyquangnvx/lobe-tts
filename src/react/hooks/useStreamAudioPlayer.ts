@@ -10,6 +10,7 @@ export interface StreamAudioPlayerResponse extends AudioProps {
   arrayBuffers: ArrayBuffer[];
   download: () => void;
   load: (arrayBuffer: ArrayBuffer, shouldAutoPlay?: boolean) => void;
+  pause: () => void;
   ref: RefObject<HTMLAudioElement>;
   reset: () => void;
   url: string;
@@ -147,7 +148,7 @@ export const useStreamAudioPlayer = (
     audioRef.current.currentTime = value;
   }, []);
 
-  const reset = useCallback(() => {
+  const handleReset = useCallback(() => {
     if (!audioRef.current) return;
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
@@ -177,7 +178,7 @@ export const useStreamAudioPlayer = (
     pause: handlePause,
     play: handlePlay,
     ref: audioRef as any,
-    reset,
+    reset: handleReset,
     setTime,
     stop: handleStop,
     url: audioRef?.current?.src || '',

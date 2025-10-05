@@ -1,6 +1,6 @@
 {
   "name": "@duyquangnvx/lobe-tts",
-  "version": "1.0.7",
+  "version": "1.0.10",
   "description": "A high-quality & reliable TTS React Hooks library with enhanced SSML options support",
   "homepage": "https://github.com/duyquangnvx/lobe-tts",
   "bugs": {
@@ -74,9 +74,11 @@
   "dependencies": {
     "@lobehub/ui": "v2.0.0",
     "antd-style": "^3.7.1",
+    "compromise": "^14.14.4",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.469.0",
     "markdown-to-txt": "^2.0.1",
+    "natural": "^8.1.0",
     "openai": "^4.93.0",
     "query-string": "^9.1.1",
     "react-layout-kit": "^1.9.1",
